@@ -1,0 +1,12 @@
+name: morse
+version: 1.0.0
+
+authors:
+  - r00ster91 <r00ster91@outlook.com>
+
+description: |
+  A library to encode, decode and play morse code
+
+crystal: 0.24.2
+
+license: MIT
