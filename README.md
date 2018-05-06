@@ -37,4 +37,4 @@ Morse.play morse_code
 
 ## Contributors
 
-- [r00ster91](https://github.com/r00ster91) r00ster91 - creator and maintainer
+- [r00ster91](https://github.com/r00ster91) - creator and maintainer
