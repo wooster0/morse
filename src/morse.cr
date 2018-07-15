@@ -1,6 +1,4 @@
 module Morse
-  extend self
-
   VERSION = "1.0.0"
 
   MORSE_CODES = {
@@ -55,13 +53,13 @@ module Morse
     '*' => "-..-",
     '/' => "-..-.",
     '=' => "-...-",
-    ' ' => '/'
+    ' ' => '/',
   }
 
   class Error < Exception
   end
 
-  def encode(text : String)
+  def self.encode(text : String)
     String.build do |io|
       text.downcase.each_char do |char|
         begin
@@ -74,7 +72,7 @@ module Morse
     end.rchop
   end
 
-  def decode(morse_code : String)
+  def self.decode(morse_code : String)
     String.build do |io|
       morse_code.split(' ').each do |code|
         MORSE_CODES.each do |morse|
@@ -86,11 +84,11 @@ module Morse
     end
   end
 
-  def play(morse_code : String)
+  def self.play(morse_code : String, delay = 0.25)
     morse_code.split(' ').each do |code|
       code.each_char do |char|
-        print '\u{7}' if char == '.'
-        sleep 0.25
+        print '\a' if char == '.'
+        sleep delay
       end
     end
   end
