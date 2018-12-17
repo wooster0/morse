@@ -1,34 +1,34 @@
 module Morse
-  VERSION = "1.0.0"
+  CODE = {
+    # Letters
+    'A' => ".-",
+    'B' => "-...",
+    'C' => "-.-.",
+    'D' => "-..",
+    'E' => ".",
+    'F' => "..-.",
+    'G' => "--.",
+    'H' => "....",
+    'I' => "..",
+    'J' => ".---",
+    'K' => "-.-",
+    'L' => ".-..",
+    'M' => "--",
+    'N' => "-.",
+    'O' => "---",
+    'P' => ".--.",
+    'Q' => "--.-",
+    'R' => ".-.",
+    'S' => "...",
+    'T' => "-",
+    'U' => "..-",
+    'V' => "...-",
+    'W' => ".--",
+    'X' => "-..-",
+    'Y' => "-.--",
+    'Z' => "--..",
 
-  MORSE_CODES = {
-    'a' => ".-",
-    'b' => "-...",
-    'c' => "-.-.",
-    'd' => "-..",
-    'e' => ".",
-    'f' => "..-.",
-    'g' => "--.",
-    'h' => "....",
-    'i' => "..",
-    'j' => ".---",
-    'k' => "-.-",
-    'l' => ".-..",
-    'm' => "--",
-    'n' => "-.",
-    'o' => "---",
-    'p' => ".--.",
-    'q' => "--.-",
-    'r' => ".-.",
-    's' => "...",
-    't' => "-",
-    'u' => "..-",
-    'v' => "...-",
-    'w' => ".--",
-    'x' => "-..-",
-    'y' => "-.--",
-    'z' => "--..",
-
+    # Numbers
     '0' => "-----",
     '1' => ".----",
     '2' => "..---",
@@ -40,19 +40,58 @@ module Morse
     '8' => "---..",
     '9' => "----.",
 
-    '.' => ".-.-.-",
-    ',' => "−−..−−",
-    ':' => "---...",
-    '?' => "..--..",
-    '’' => ".----.",
-    '(' => "-.--.",
-    ')' => "-.--.-",
-    '@' => ".--.-.",
-    '+' => ".-.-.",
-    '-' => "-....-",
-    '*' => "-..-",
-    '/' => "-..-.",
-    '=' => "-...-",
+    # Punctuation
+    ')'  => "-.--.-",
+    '('  => "-.--.",
+    '='  => "-...-",
+    '!'  => "-.-.--",
+    '?'  => "..--..",
+    '.'  => ".-.-.-",
+    ':'  => "---...",
+    ';'  => "-.-.-.",
+    ','  => "--..--",
+    '-'  => "-....-",
+    '+'  => ".-.-.",
+    '"'  => ".-..-.",
+    '/'  => "-..-.",
+    '&'  => ".-...",
+    '\'' => ".----.",
+    '@'  => ".--.-.",
+    '_'  => "..--.-",
+    '$'  => "...-..-",
+
+    # Non-English letters
+    'À' => ".--.-",
+    'Ä' => ".-.-",
+    'Å' => ".--.-",
+    'Ą' => ".-.-",
+    'Æ' => ".-.-",
+    'Ć' => "-.-..",
+    'Ĉ' => "-.-..",
+    'Ç' => "-.-..",
+    'Đ' => "..-..",
+    'Ð' => "..--.",
+    'É' => "..-..",
+    'È' => ".-..-",
+    'Ę' => "..-..",
+    'Ĝ' => "--.-.",
+    'Ĥ' => "----",
+    'Ĵ' => ".---.",
+    'Ł' => ".-..-",
+    'Ń' => "--.--",
+    'Ñ' => "--.--",
+    'Ö' => "---.",
+    'Ó' => "---.",
+    'Ø' => "---.",
+    'Ś' => "...-...",
+    'Ŝ' => "...-.",
+    'Š' => "----",
+    'Þ' => ".--..",
+    'Ü' => "..--",
+    'Ŭ' => "..--",
+    'Ź' => "--..-.",
+    'Ż' => "--..-",
+
     ' ' => '/',
   }
 
@@ -61,35 +100,41 @@ module Morse
 
   def self.encode(text : String)
     String.build do |io|
-      text.downcase.each_char do |char|
-        begin
-          io << MORSE_CODES[char]
-        rescue KeyError
-          raise Error.new "Cannot encode #{char.inspect}"
-        end
+      iterator = text.upcase.each_char
+      loop do
+        char = iterator.next
+
+        io << Morse.encode(char.as(Char))
+
+        break if iterator.@end
+
         io << ' '
       end
-    end.rchop
+    end
   end
 
   def self.decode(morse_code : String)
     String.build do |io|
       morse_code.split(' ').each do |code|
-        MORSE_CODES.each do |morse|
-          if code == morse[1]
-            io << morse[0]
-          end
+        begin
+          io << CODE.key_for(code)
+        rescue KeyError
+          raise Error.new "invalid morse code #{code.inspect}"
         end
       end
     end
   end
 
-  def self.play(morse_code : String, delay = 0.25)
-    morse_code.split(' ').each do |code|
-      code.each_char do |char|
-        print '\a' if char == '.'
-        sleep delay
-      end
+  def self.encode(character : Char)
+    CODE[character.upcase]
+  rescue KeyError
+    raise Error.new "cannot encode #{character.inspect}"
+  end
+
+  def self.play(morse_code : String, delay = 0.20)
+    morse_code.each_char do |char|
+      print '\a' if char == '.'
+      sleep delay
     end
   end
 end
